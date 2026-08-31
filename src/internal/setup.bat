@@ -1,15 +1,16 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-rem One-time dependency installer for transcribe.bat. Downloads whisper.cpp,
-rem ffmpeg, and the speech model into bin\ and models\ next to this script,
-rem using only tools built into Windows (PowerShell). Safe to re-run: it
-rem skips anything already present. Internet access is only needed here,
-rem never during transcription itself.
+rem One-time dependency installer, called by transcribe.bat (one folder up).
+rem Downloads whisper.cpp, ffmpeg, and the speech model into bin\ and
+rem models\ next to transcribe.bat, using only tools built into Windows
+rem (PowerShell). Safe to re-run: it skips anything already present.
+rem Internet access is only needed here, never during transcription itself.
 
 set "SCRIPT_DIR=%~dp0"
-set "BIN_DIR=%SCRIPT_DIR%bin"
-set "MODELS_DIR=%SCRIPT_DIR%models"
+set "ROOT_DIR=%SCRIPT_DIR%.."
+set "BIN_DIR=%ROOT_DIR%\bin"
+set "MODELS_DIR=%ROOT_DIR%\models"
 
 set "WHISPER_EXE=%BIN_DIR%\whisper-cli.exe"
 set "FFMPEG_EXE=%BIN_DIR%\ffmpeg.exe"

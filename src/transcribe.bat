@@ -2,6 +2,8 @@
 setlocal EnableDelayedExpansion
 
 rem Model path is configurable here (relative to this script's folder).
+rem setup.bat/download.ps1 live under internal\ so top level only shows
+rem this script and README.txt; bin\ and models\ stay at top level too.
 set "SCRIPT_DIR=%~dp0"
 set "MODEL=%SCRIPT_DIR%models\ggml-small.bin"
 set "WHISPER_EXE=%SCRIPT_DIR%bin\whisper-cli.exe"
@@ -12,7 +14,7 @@ echo  Local Meeting Transcriber
 echo ========================================
 echo.
 
-set "SETUP_BAT=%SCRIPT_DIR%setup.bat"
+set "SETUP_BAT=%SCRIPT_DIR%internal\setup.bat"
 
 if not exist "%WHISPER_EXE%" goto :run_setup
 if not exist "%FFMPEG_EXE%" goto :run_setup

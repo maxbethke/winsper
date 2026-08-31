@@ -15,12 +15,12 @@ ZIP_PATH="$DIST_DIR/LocalTranscriber.zip"
 
 echo "Assembling runtime folder..."
 rm -rf "$STAGE_DIR"
-mkdir -p "$STAGE_DIR"
+mkdir -p "$STAGE_DIR/internal"
 
 cp "$SRC_DIR/transcribe.bat" "$STAGE_DIR/"
-cp "$SRC_DIR/setup.bat" "$STAGE_DIR/"
-cp "$SRC_DIR/download.ps1" "$STAGE_DIR/"
 cp "$SRC_DIR/README.txt" "$STAGE_DIR/"
+cp "$SRC_DIR/internal/setup.bat" "$STAGE_DIR/internal/"
+cp "$SRC_DIR/internal/download.ps1" "$STAGE_DIR/internal/"
 
 echo "Creating zip..."
 mkdir -p "$DIST_DIR"
