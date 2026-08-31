@@ -220,7 +220,7 @@ if errorlevel 1 (
 
 echo Transcribing...
 set "OUTNOEXT=%TEMPDIR%\transcript"
-"%WHISPER_EXE%" -m "%MODEL%" -f "%TEMPWAV%" -l auto -otxt -nt -of "%OUTNOEXT%"
+"%WHISPER_EXE%" -m "%MODEL%" -f "%TEMPWAV%" -l auto -otxt -nt -t %NUMBER_OF_PROCESSORS% -of "%OUTNOEXT%"
 if errorlevel 1 (
     echo Error: transcription failed for this file.
     echo The original recording was not modified.
