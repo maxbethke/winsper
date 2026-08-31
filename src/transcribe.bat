@@ -12,15 +12,6 @@ echo  Local Meeting Transcriber
 echo ========================================
 echo.
 
-if "%~1"=="" (
-    echo No recording was supplied.
-    echo.
-    echo Drag a recording onto transcribe.bat.
-    echo.
-    pause
-    exit /b 1
-)
-
 set "SETUP_BAT=%SCRIPT_DIR%setup.bat"
 
 if not exist "%WHISPER_EXE%" goto :run_setup
@@ -66,6 +57,17 @@ if not exist "%WHISPER_EXE%" (
 if not exist "%MODEL%" (
     echo Error: Whisper model not found:
     echo %MODEL%
+    echo.
+    pause
+    exit /b 1
+)
+
+if "%~1"=="" (
+    echo All required components are installed.
+    echo.
+    echo No recording was supplied.
+    echo.
+    echo Drag a recording onto transcribe.bat.
     echo.
     pause
     exit /b 1

@@ -18,6 +18,7 @@ set "MODEL_FILE=%MODELS_DIR%\ggml-small.bin"
 set "WHISPER_URL=https://github.com/ggml-org/whisper.cpp/releases/latest/download/whisper-bin-x64.zip"
 set "FFMPEG_URL=https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
 set "MODEL_URL=https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.bin"
+set "DOWNLOAD_PS1=%SCRIPT_DIR%download.ps1"
 
 echo ========================================
 echo  Local Meeting Transcriber - Setup
@@ -31,6 +32,13 @@ if exist "%WHISPER_EXE%" if exist "%FFMPEG_EXE%" if exist "%MODEL_FILE%" (
     echo Everything is already installed. Nothing to do.
     echo.
     exit /b 0
+)
+
+if not exist "%DOWNLOAD_PS1%" (
+    echo Error: download.ps1 was not found.
+    echo Expected at: %DOWNLOAD_PS1%
+    echo.
+    exit /b 1
 )
 
 echo This one-time setup downloads the transcription engine ^(whisper.cpp^),
@@ -73,7 +81,7 @@ echo Downloading whisper.cpp...
 set "TMPZIP=%TEMP%\whisper-bin-x64_%RANDOM%.zip"
 set "TMPDIR=%TEMP%\whisper-extract_%RANDOM%"
 
-powershell -NoProfile -Command "try { Invoke-WebRequest -Uri '%WHISPER_URL%' -OutFile '%TMPZIP%' -UseBasicParsing } catch { exit 1 }"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%DOWNLOAD_PS1%" -Url "%WHISPER_URL%" -OutFile "%TMPZIP%"
 if errorlevel 1 (
     echo Error: failed to download whisper.cpp.
     echo.
@@ -103,7 +111,7 @@ echo Downloading ffmpeg...
 set "TMPZIP=%TEMP%\ffmpeg-win64-gpl_%RANDOM%.zip"
 set "TMPDIR=%TEMP%\ffmpeg-extract_%RANDOM%"
 
-powershell -NoProfile -Command "try { Invoke-WebRequest -Uri '%FFMPEG_URL%' -OutFile '%TMPZIP%' -UseBasicParsing } catch { exit 1 }"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%DOWNLOAD_PS1%" -Url "%FFMPEG_URL%" -OutFile "%TMPZIP%"
 if errorlevel 1 (
     echo Error: failed to download ffmpeg.
     echo.
@@ -130,7 +138,7 @@ rem ---------------------------------------------------------
 :install_model
 echo Downloading speech model ^(ggml-small.bin, ~465 MB^)...
 
-powershell -NoProfile -Command "try { Invoke-WebRequest -Uri '%MODEL_URL%' -OutFile '%MODEL_FILE%.part' -UseBasicParsing } catch { exit 1 }"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%DOWNLOAD_PS1%" -Url "%MODEL_URL%" -OutFile "%MODEL_FILE%.part"
 if errorlevel 1 (
     echo Error: failed to download the speech model.
     echo.

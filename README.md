@@ -15,6 +15,7 @@ winsper/
 ├── src/                  # source of truth for the shipped scripts
 │   ├── transcribe.bat    # drag-and-drop entry point
 │   ├── setup.bat         # downloads whisper.cpp/ffmpeg/model on first run
+│   ├── download.ps1      # single-file downloader with a progress bar, used by setup.bat
 │   └── README.txt        # end-user docs, bundled into the release zip
 ├── scripts/
 │   └── build.sh          # packages src/ into the release zip
@@ -22,7 +23,7 @@ winsper/
 └── specs/requirements.md
 ```
 
-The release zip is just these three files — `whisper-cli.exe`,
+The release zip is just these four files — `whisper-cli.exe`,
 `ffmpeg.exe`, and the model are **not** bundled; `setup.bat` downloads
 them onto the end user's machine the first time they're needed. Always
 edit `src/`, never edit inside `dist/`.

@@ -19,6 +19,7 @@ mkdir -p "$STAGE_DIR"
 
 cp "$SRC_DIR/transcribe.bat" "$STAGE_DIR/"
 cp "$SRC_DIR/setup.bat" "$STAGE_DIR/"
+cp "$SRC_DIR/download.ps1" "$STAGE_DIR/"
 cp "$SRC_DIR/README.txt" "$STAGE_DIR/"
 
 echo "Creating zip..."
