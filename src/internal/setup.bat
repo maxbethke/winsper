@@ -98,7 +98,7 @@ if errorlevel 1 (
 )
 
 copy /y "%TMPDIR%\Release\whisper-cli.exe" "%BIN_DIR%\whisper-cli.exe" >nul
-copy /y "%TMPDIR%\Release\ggml*.dll" "%BIN_DIR%\" >nul
+copy /y "%TMPDIR%\Release\*.dll" "%BIN_DIR%\" >nul
 
 del /q "%TMPZIP%" >nul 2>&1
 rd /s /q "%TMPDIR%" >nul 2>&1
