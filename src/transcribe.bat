@@ -1,24 +1,29 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-rem Model path is configurable here (relative to this script's folder).
-rem setup.bat/download.ps1 live under internal\ so top level only shows
-rem this script and README.txt; bin\ and models\ stay at top level too.
+rem setup.bat/download.ps1/install-model.bat live under internal\ so top
+rem level only shows this script and README.txt; bin\ and models\ stay at
+rem top level too. Any number of ggml-*.bin files can sit in models\ -
+rem see :select_model below.
 set "SCRIPT_DIR=%~dp0"
-set "MODEL=%SCRIPT_DIR%models\ggml-small.bin"
-set "WHISPER_EXE=%SCRIPT_DIR%bin\whisper-cli.exe"
-set "FFMPEG_EXE=%SCRIPT_DIR%bin\ffmpeg.exe"
+set "BIN_DIR=%SCRIPT_DIR%bin"
+set "MODELS_DIR=%SCRIPT_DIR%models"
+set "WHISPER_EXE=%BIN_DIR%\whisper-cli.exe"
+set "FFMPEG_EXE=%BIN_DIR%\ffmpeg.exe"
+set "SETUP_BAT=%SCRIPT_DIR%internal\setup.bat"
+set "INSTALL_MODEL_BAT=%SCRIPT_DIR%internal\install-model.bat"
 
 echo ========================================
 echo  Local Meeting Transcriber
 echo ========================================
 echo.
 
-set "SETUP_BAT=%SCRIPT_DIR%internal\setup.bat"
+set "HAVE_MODEL=0"
+if exist "%MODELS_DIR%\*.bin" set "HAVE_MODEL=1"
 
 if not exist "%WHISPER_EXE%" goto :run_setup
 if not exist "%FFMPEG_EXE%" goto :run_setup
-if not exist "%MODEL%" goto :run_setup
+if "%HAVE_MODEL%"=="0" goto :run_setup
 goto :deps_ready
 
 :run_setup
@@ -56,9 +61,9 @@ if not exist "%WHISPER_EXE%" (
     exit /b 1
 )
 
-if not exist "%MODEL%" (
-    echo Error: Whisper model not found:
-    echo %MODEL%
+if not exist "%MODELS_DIR%\*.bin" (
+    echo Error: no Whisper model found in:
+    echo %MODELS_DIR%
     echo.
     pause
     exit /b 1
@@ -66,6 +71,17 @@ if not exist "%MODEL%" (
 
 if "%~1"=="" (
     echo All required components are installed.
+    echo.
+    set "INSTALL_MORE=N"
+    set /p INSTALL_MORE="Install another model? [Y/N]: "
+    if /i "!INSTALL_MORE!"=="Y" (
+        echo.
+        if exist "%INSTALL_MODEL_BAT%" (
+            call "%INSTALL_MODEL_BAT%"
+        ) else (
+            echo Error: install-model.bat was not found.
+        )
+    )
     echo.
     echo No recording was supplied.
     echo.
@@ -75,9 +91,17 @@ if "%~1"=="" (
     exit /b 1
 )
 
+call :select_model
+if not defined MODEL (
+    echo No model selected. Cannot continue.
+    echo.
+    pause
+    exit /b 1
+)
+
 call :count_args %*
 
-echo Model: ggml-small.bin
+echo Model: %MODEL_NAME%
 echo Files to process: %TOTAL%
 echo.
 
@@ -95,6 +119,47 @@ echo All files processed.
 echo.
 pause
 exit /b 0
+
+rem ---------------------------------------------------------
+rem Picks the model to use for this run. If only one ggml-*.bin file is
+rem installed, use it silently. If several are installed, ask which one.
+:select_model
+set "MODEL="
+set "MODEL_NAME="
+set /a MODEL_COUNT=0
+for %%F in ("%MODELS_DIR%\*.bin") do (
+    set /a MODEL_COUNT+=1
+    set "MODEL_PATH_!MODEL_COUNT!=%%~fF"
+    set "MODEL_NAME_!MODEL_COUNT!=%%~nxF"
+)
+
+if %MODEL_COUNT%==1 (
+    set "MODEL=!MODEL_PATH_1!"
+    set "MODEL_NAME=!MODEL_NAME_1!"
+    goto :eof
+)
+
+echo Multiple models are installed:
+echo.
+for /l %%i in (1,1,%MODEL_COUNT%) do echo   %%i^) !MODEL_NAME_%%i!
+echo.
+set "MODEL_CHOICE="
+set /p MODEL_CHOICE="Which model would you like to use? [1-%MODEL_COUNT%]: "
+
+for /l %%i in (1,1,%MODEL_COUNT%) do (
+    if "%MODEL_CHOICE%"=="%%i" (
+        set "MODEL=!MODEL_PATH_%%i!"
+        set "MODEL_NAME=!MODEL_NAME_%%i!"
+    )
+)
+
+if not defined MODEL (
+    echo Invalid choice, using !MODEL_NAME_1! by default.
+    set "MODEL=!MODEL_PATH_1!"
+    set "MODEL_NAME=!MODEL_NAME_1!"
+)
+echo.
+goto :eof
 
 rem ---------------------------------------------------------
 :count_args

@@ -21,6 +21,7 @@ cp "$SRC_DIR/transcribe.bat" "$STAGE_DIR/"
 cp "$SRC_DIR/README.txt" "$STAGE_DIR/"
 cp "$SRC_DIR/internal/setup.bat" "$STAGE_DIR/internal/"
 cp "$SRC_DIR/internal/download.ps1" "$STAGE_DIR/internal/"
+cp "$SRC_DIR/internal/install-model.bat" "$STAGE_DIR/internal/"
 
 echo "Creating zip..."
 mkdir -p "$DIST_DIR"

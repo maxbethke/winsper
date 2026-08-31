@@ -26,6 +26,17 @@ holds setup machinery — no need to open it.
 
 - If a `.txt` already exists: a single dropped file asks to overwrite;
   multiple files write `Name.transcript.txt` instead.
-- Model used is `models\ggml-small.bin` — change the `MODEL` line near
-  the top of `transcribe.bat` to use a different one.
-- Language is auto-detected.
+- Default model is `ggml-small.bin`. Language is auto-detected.
+
+## Installing more models
+
+Run `transcribe.bat` with nothing dropped onto it (just double-click
+it). After the component check, it asks "Install another model? [Y/N]".
+Answer Y to pick from a list (tiny/base/small/medium/large-v3, with
+sizes) and it downloads the chosen one into `models\`.
+
+Larger models are slower but more accurate; smaller ones are faster but
+less accurate.
+
+If more than one model is installed, `transcribe.bat` asks which one to
+use each time you drop files onto it.

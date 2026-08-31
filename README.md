@@ -12,7 +12,7 @@ winsper/
 ├── src/                     # source of truth for the shipped scripts
 │   ├── transcribe.bat       # drag-and-drop entry point
 │   ├── README.txt           # end-user docs, bundled into the release
-│   ├── internal/            # setup.bat + download.ps1 (not user-facing)
+│   ├── internal/            # setup.bat, install-model.bat, download.ps1 (not user-facing)
 │   ├── bin/                 # populated by setup.bat
 │   └── models/              # populated by setup.bat
 ├── scripts/build.sh         # packages src/ into the release zip
@@ -49,5 +49,9 @@ progress bar shown) before transcribing.
 Drag one or more recordings onto `transcribe.bat`. Produces `Name.txt`
 next to each; a single dropped file also gets copied to the clipboard.
 An existing `.txt` triggers an overwrite prompt (single file) or a
-`Name.transcript.txt` fallback (multiple files). See `src/README.txt`
+`Name.transcript.txt` fallback (multiple files).
+
+Running `transcribe.bat` with nothing dropped on it offers to install
+another model (a size-annotated list to pick from); if multiple models
+are installed, dropping files asks which one to use. See `src/README.txt`
 for full end-user details.
