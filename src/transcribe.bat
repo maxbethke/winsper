@@ -21,6 +21,32 @@ if "%~1"=="" (
     exit /b 1
 )
 
+set "SETUP_BAT=%SCRIPT_DIR%setup.bat"
+
+if not exist "%WHISPER_EXE%" goto :run_setup
+if not exist "%FFMPEG_EXE%" goto :run_setup
+if not exist "%MODEL%" goto :run_setup
+goto :deps_ready
+
+:run_setup
+if not exist "%SETUP_BAT%" (
+    echo Error: required components are missing and setup.bat was not found.
+    echo Expected at: %SETUP_BAT%
+    echo.
+    pause
+    exit /b 1
+)
+echo Required components are missing. Running setup...
+echo.
+call "%SETUP_BAT%"
+if errorlevel 1 (
+    echo Setup failed. Cannot continue.
+    echo.
+    pause
+    exit /b 1
+)
+
+:deps_ready
 if not exist "%FFMPEG_EXE%" (
     echo Error: ffmpeg.exe was not found.
     echo Expected at: %FFMPEG_EXE%

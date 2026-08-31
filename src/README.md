@@ -24,11 +24,22 @@ You can also run it from a command prompt:
 transcribe.bat "C:\Meetings\Team Meeting.mp4" "C:\Meetings\Standup.m4a"
 ```
 
+## First run / setup
+
+The first time you use `transcribe.bat`, it detects that whisper.cpp,
+ffmpeg, and the speech model aren't installed yet and automatically runs
+`setup.bat` to download them (~500 MB total) into `bin\` and `models\`
+next to the scripts. This is the only time internet access is used - it's
+a one-time step, and every transcription afterwards runs fully offline.
+You can also run `setup.bat` yourself ahead of time if you'd rather not
+wait on first use.
+
 ## Privacy
 
-Transcription runs entirely on your machine using whisper.cpp and ffmpeg,
-both bundled in this folder. Nothing is uploaded anywhere. Neither the
-recording nor the transcript ever leaves your computer.
+Transcription runs entirely on your machine using whisper.cpp and ffmpeg.
+Nothing is uploaded anywhere. Neither the recording nor the transcript
+ever leaves your computer. The only network access this tool ever makes
+is the one-time setup download described above.
 
 ## Notes
 
