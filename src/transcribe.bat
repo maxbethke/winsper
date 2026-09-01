@@ -13,6 +13,14 @@ set "FFMPEG_EXE=%BIN_DIR%\ffmpeg.exe"
 set "SETUP_BAT=%SCRIPT_DIR%internal\setup.bat"
 set "INSTALL_MODEL_BAT=%SCRIPT_DIR%internal\install-model.bat"
 
+rem whisper.cpp's compute is memory-bandwidth-bound, not core-bound - using
+rem every logical core (which can be 16-24+ on modern laptops) buys little
+rem speed and risks severe memory contention, so cap at a safe default
+rem rather than %NUMBER_OF_PROCESSORS%.
+set "THREADS=%NUMBER_OF_PROCESSORS%"
+if not defined THREADS set "THREADS=4"
+if %THREADS% GTR 4 set "THREADS=4"
+
 echo ========================================
 echo  Local Meeting Transcriber
 echo ========================================
@@ -209,7 +217,7 @@ mkdir "%TEMPDIR%" >nul 2>&1
 set "TEMPWAV=%TEMPDIR%\audio.wav"
 
 echo Extracting audio...
-"%FFMPEG_EXE%" -y -i "%INPUT%" -ar 16000 -ac 1 -c:a pcm_s16le "%TEMPWAV%" >nul 2>&1
+"%FFMPEG_EXE%" -y -vn -sn -dn -i "%INPUT%" -ar 16000 -ac 1 -c:a pcm_s16le "%TEMPWAV%" >nul 2>&1
 if errorlevel 1 (
     echo Error: ffmpeg failed to extract audio from this file.
     echo The original recording was not modified.
@@ -220,7 +228,7 @@ if errorlevel 1 (
 
 echo Transcribing...
 set "OUTNOEXT=%TEMPDIR%\transcript"
-"%WHISPER_EXE%" -m "%MODEL%" -f "%TEMPWAV%" -l auto -otxt -nt -t %NUMBER_OF_PROCESSORS% -of "%OUTNOEXT%"
+"%WHISPER_EXE%" -m "%MODEL%" -f "%TEMPWAV%" -l auto -otxt -nt -t %THREADS% -of "%OUTNOEXT%"
 if errorlevel 1 (
     echo Error: transcription failed for this file.
     echo The original recording was not modified.
