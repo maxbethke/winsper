@@ -228,7 +228,10 @@ if errorlevel 1 (
 
 echo Transcribing...
 set "OUTNOEXT=%TEMPDIR%\transcript"
-"%WHISPER_EXE%" -m "%MODEL%" -f "%TEMPWAV%" -l auto -otxt -nt -t %THREADS% -of "%OUTNOEXT%"
+rem -bs 1 -bo 1 forces greedy decoding. whisper-cli's own default (beam
+rem size 5) multiplies compute cost ~5x per token for a small accuracy
+rem gain - not worth it for CPU-only local transcription.
+"%WHISPER_EXE%" -m "%MODEL%" -f "%TEMPWAV%" -l auto -otxt -nt -t %THREADS% -bs 1 -bo 1 -of "%OUTNOEXT%"
 if errorlevel 1 (
     echo Error: transcription failed for this file.
     echo The original recording was not modified.
