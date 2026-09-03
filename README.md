@@ -12,7 +12,7 @@ winsper/
 ├── src/                     # source of truth for the shipped scripts
 │   ├── transcribe.bat       # drag-and-drop entry point
 │   ├── README.txt           # end-user docs, bundled into the release
-│   ├── internal/            # setup.bat, install-model.bat, download.ps1 (not user-facing)
+│   ├── internal/            # setup.bat (CPU), setup-cuda.bat (GPU), install-model.bat, download.ps1
 │   ├── bin/                 # populated by setup.bat
 │   └── models/              # populated by setup.bat
 ├── scripts/build.sh         # packages src/ into the release zip
@@ -28,21 +28,25 @@ Always edit `src/`, never `dist/`.
 ## Build / Release
 
 ```bash
-./scripts/build.sh
+./scripts/build.sh          # CPU build  -> dist/LocalTranscriber.zip
+./scripts/build.sh cuda     # CUDA build -> dist/LocalTranscriber-CUDA.zip
 ```
 
-Zips `src/` into `dist/LocalTranscriber.zip`. To publish:
+The CUDA build is GPU-accelerated (NVIDIA only, falls back to CPU
+automatically if no compatible GPU is found) and downloads more at setup
+(~1.1 GB vs ~500 MB) since it bundles the CUDA runtime. To publish:
 
 ```bash
-gh release create v1.0.0 dist/LocalTranscriber.zip --title "v1.0.0" --notes "..."
+gh release create v1.0.0 dist/LocalTranscriber.zip dist/LocalTranscriber-CUDA.zip --title "v1.0.0" --notes "..."
 ```
 
 ## Setup (end users)
 
-Download `LocalTranscriber.zip` from Releases, extract anywhere on
-Windows. Nothing else to install — the first run of `transcribe.bat`
-downloads whisper.cpp, ffmpeg, and the model (~500 MB, one-time,
-progress bar shown) before transcribing.
+Download `LocalTranscriber.zip` (or `LocalTranscriber-CUDA.zip` if you
+have an NVIDIA GPU) from Releases, extract anywhere on Windows. Nothing
+else to install — the first run of `transcribe.bat` downloads
+whisper.cpp, ffmpeg, and the model (progress bar per file) before
+transcribing.
 
 ## Run / Use
 

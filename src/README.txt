@@ -3,6 +3,11 @@
 Fully local, offline speech-to-text. No cloud, no accounts, no upload —
 the recording and transcript never leave this machine.
 
+This comes in two builds: a CPU build (works everywhere) and a CUDA
+build (needs an NVIDIA GPU, falls back to CPU automatically if none is
+found, much faster on a supported machine). Everything below applies to
+both; the CUDA build just downloads more at setup (~1.1 GB vs ~500 MB).
+
 ## Usage
 
 Drag one or more recordings onto `transcribe.bat`:
@@ -17,7 +22,7 @@ can decode).
 ## First run
 
 The first time you use `transcribe.bat`, it downloads whisper.cpp,
-ffmpeg, and the speech model (~500 MB, with a progress bar) into `bin\`
+ffmpeg, and the speech model (with a progress bar per file) into `bin\`
 and `models\`. This is the only time internet access is used; every
 transcription after that runs fully offline. The `internal\` folder just
 holds setup machinery — no need to open it.
@@ -36,7 +41,8 @@ Answer Y to pick from a list (tiny/base/small/medium/large-v3, with
 sizes) and it downloads the chosen one into `models\`.
 
 Larger models are slower but more accurate; smaller ones are faster but
-less accurate.
+less accurate. On the CUDA build, larger models are much more practical
+thanks to GPU acceleration.
 
 If more than one model is installed, `transcribe.bat` asks which one to
 use each time you drop files onto it.
